@@ -3,8 +3,7 @@
 unsigned char fetchb(c)
 struct cpu *const c;
 {
-  NULLCHK(c);
-  unsigned char x = buffer[c->pc];
+  const unsigned char x = buffer[c->pc];
   c->pc += 1;
   return x;
 }
@@ -12,10 +11,24 @@ struct cpu *const c;
 unsigned short fetchw(c)
 struct cpu *const c;
 {
-  NULLCHK(c);
-  unsigned short x = buffer[(c->pc) | (c->pc << 8)];
-  c->pc += 2;
+  auto index;
+  unsigned short x, x1, x2;
+  
+  x1 = buffer[c->pc];
+  x2 = buffer[c->pc + 1];
+  x = (x1|x2 << 8);
   return x;
+}
+
+unsigned char rofetchb(unsigned short i, struct cpu * c)
+{
+  return buffer[i];
+}
+
+unsigned short rofetchw(c)
+struct cpu *const c;
+{
+  return buffer[(c->pc) | ((c->pc + 1) << 8)];
 }
 
 reset(c) struct cpu *const c;

@@ -4,7 +4,7 @@
 
 extern reset(struct cpu*);
 
-static printc(c) const struct cpu *const c;
+printc(c) const struct cpu *const c;
 {
   if (!c)
     return 1;
@@ -63,15 +63,11 @@ main()
 
   reset(cpu);
 
-  cyc = 2;
-
-  buffer[0xfffc] = LDA_IMM;
-  buffer[0xfffd] = 0xaa;
-
   loop(cpu);
-  
-  /* defer */
+#if 1 /* debugging */
   printc(cpu);
+#endif
+  /* defer */
   free(cpu);
   return 0;
 }

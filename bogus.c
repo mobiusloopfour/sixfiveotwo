@@ -1,4 +1,4 @@
 #include "defs.h"
 
-char buffer[65535];
+char buffer[0xFFFF];
 unsigned long long cyc;

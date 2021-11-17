@@ -44,16 +44,20 @@ struct cpu {
 #define LDA_ABY 0xB9
 #define LDA_IDX 0xA1
 #define LDA_IDY 0xB1
+#define JSR 0x20
 
-extern int (*f_ptr[0xff])(struct cpu*);
+extern void (*f_ptr[0xff])(struct cpu*);
 
 /* memop.c */
-extern unsigned short   fetchw(struct cpu *const c);
-extern unsigned char    fetchb(struct cpu *const c);
+extern unsigned short   fetchw(struct cpu *);
+extern unsigned char    fetchb(struct cpu *);
+
+extern unsigned short   rofetchw(struct cpu *);
+unsigned char           rofetchb(unsigned short i, struct cpu * c);
 
 /* bogus.c */
 
-extern char buffer[65535];
+extern char buffer[0xFFFF];
 extern unsigned long long cyc;
 
 #endif /* __DEFS_H_ */
