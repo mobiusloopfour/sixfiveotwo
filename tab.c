@@ -1,9 +1,27 @@
+/* ISA table iteration
+ *
+ *     Copyright (C) 2021 MobiusLoopFour
+ *
+ *	This file is part of sixfiveotwo.
+ *	sixfiveotwo is free software; you can redistribute it and/or modify it under
+ *	the terms of the GNU General Public License as published by the Free
+ *	Software Foundation; either version 3, or (at your option) any later
+ *	version.
+ *	Sixfiveotwo is distributed in the hope that it will be useful, but
+ *	WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *	or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ *	for more details.
+ *	You should have received a copy of the GNU General Public License
+ *	along with sixfiveotwo; see the file COPYING.  If not see
+ *	<http://www.gnu.org/licenses/>.  
+ *
+ */
+
 #include "defs.h"
 #include <stdio.h>
 
 /* lda */
-void 
-def_handler (c) struct cpu *c;
+void def_handler (c) struct cpu *c;
 {
   fprintf (stderr, "Unhandled instruction at $%X\n", c->pc);
   return;
@@ -14,8 +32,7 @@ def_handler (c) struct cpu *c;
 
 extern printc (struct cpu *c);
 
-void 
-jsr (c) struct cpu *c;
+void jsr (c) struct cpu *c;
 {
 
   buffer[c->sp] = LO (c->pc);
@@ -37,22 +54,22 @@ jsr (c) struct cpu *c;
 
 static setf (struct cpu *const c);
 
-void 
-lda_imm (c) struct cpu *c;
+void
+lda_imm (struct cpu *c)
 {
   c->acc = fetchb (c);
   LDA_RETURN (2);
 }
 
 void
-lda_zpg (c) struct cpu *c;
+lda_zpg (struct cpu *c)
 {
   c->acc = buffer[fetchb (c)];
   LDA_RETURN (3);
 }
 
 void
-lda_zpx (c) struct cpu *c;
+lda_zpx (struct cpu *c)
 {
   const unsigned char zpa = fetchb (c) + c->irx;
   c->acc = buffer[zpa];
@@ -60,40 +77,39 @@ lda_zpx (c) struct cpu *c;
 }
 
 void
-lda_abs (c) struct cpu *c;
+lda_abs (struct cpu *c)
 {
   LDA_RETURN (4);
 }
 
 void
-lda_abx (c) struct cpu *c;
+lda_abx (struct cpu *c)
 {
   cyc -= 4; /* TODO: check for page crossing */
   LDA_RETURN (0);
 }
 
 void
-lda_aby (c) struct cpu *c;
+lda_aby (struct cpu *c)
 {
   cyc -= 4; /* TODO: check for page crossing */
   LDA_RETURN (0);
 }
 
 void
-lda_idx (c) struct cpu *c;
+lda_idx (struct cpu *c)
 {
   LDA_RETURN (6);
 }
 
 void
-lda_idy (c) struct cpu *c;
+lda_idy (struct cpu *c)
 {
   cyc -= 5; /* TODO: check for page crossing */
   LDA_RETURN (0);
 }
 
-static
-setf (c) struct cpu *const c;
+static setf (c) struct cpu *const c;
 {
   NULLCHK (c);
   if (!c->acc)
@@ -111,7 +127,9 @@ setf (c) struct cpu *const c;
 
 void
 nop (struct cpu *c)
-{ cyc -= 2; }
+{
+  cyc -= 2;
+}
 
 void (*f_ptr[0xff]) (struct cpu *);
 
@@ -133,6 +151,6 @@ init ()
   f_ptr[LDA_ZPG] = &lda_zpg;
   f_ptr[LDA_ZPX] = &lda_zpx;
   f_ptr[JSR] = &jsr;
-	f_ptr[NOP] = &nop;
+  f_ptr[NOP] = &nop;
   return 0;
 }
