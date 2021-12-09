@@ -1,6 +1,7 @@
 #include "defs.h"
 #include <stdint.h>
 #include <stdio.h>
+#include <assert.h>
 
 extern reset (struct cpu *);
 
@@ -35,20 +36,9 @@ loop (c) struct cpu *c;
 
   while (cyc > 0)
     {
-      if (cyc == UINT64_MAX)
-        {
-          /* rather crude */
-          fprintf (stderr, "Cycles overflow\n");
-          return 1;
-        }
-      else if (!next)
-        {
-          fprintf (stderr,
-                   "Attempt to execute zero'ed memory (core dumped)\n");
-          printc (c);
-          return 1;
-        }
+			assert(cyc != UINT64_MAX);
       next = fetchb (c);
+			assert(next != 0);
       EXEC (next, c);
     }
 
@@ -68,11 +58,23 @@ main ()
 
   reset (cpu);
 
-  loop (cpu);
+  buffer[0xfffc] = JSR;
+	buffer[0xfffd] = 0x10;
+	buffer[0xfffe] = 0x10;
+	buffer[0x1010] = NOP;
+	buffer[0x1011] = NOP;
+
+	assert(buffer[0xfffc] == JSR);
+
+  cyc = 10;
+
+  if (!loop (cpu))
+    {
 #if 1 /* debugging */
-  printc (cpu);
+      printc (cpu);
 #endif
-  /* defer */
+      /* defer */
+    }
   free (cpu);
   return 0;
 }

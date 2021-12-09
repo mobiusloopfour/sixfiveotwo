@@ -59,6 +59,7 @@ struct cpu
 #define LDA_IDX 0xA1
 #define LDA_IDY 0xB1
 #define JSR 0x20
+#define NOP 0xEA
 
 extern void (*f_ptr[0xff]) (struct cpu *);
 
@@ -71,7 +72,7 @@ unsigned char rofetchb (unsigned short i, struct cpu *c);
 
 /* bogus.c */
 
-extern char buffer[0xFFFF];
+extern volatile char buffer[0xFFFF];
 extern unsigned long long cyc;
 
 #endif /* __DEFS_H_ */
